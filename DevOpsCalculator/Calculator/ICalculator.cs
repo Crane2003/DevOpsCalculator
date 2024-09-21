@@ -5,8 +5,8 @@ public interface ICalculator
     [Operation("add")]
     double Add(double a, double b);
     
-    [Operation("substract")]
-    double Substract(double a, double b);
+    [Operation("subtract")]
+    double Subtract(double a, double b);
     
     [Operation("multiply")]
     double Multiply(double a, double b);
