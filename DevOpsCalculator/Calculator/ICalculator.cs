@@ -2,15 +2,15 @@
 
 public interface ICalculator
 {
-    [Operation("add")]
+    [Operation("+")]
     double Add(double a, double b);
     
-    [Operation("subtract")]
+    [Operation("-")]
     double Subtract(double a, double b);
     
-    [Operation("multiply")]
+    [Operation("*")]
     double Multiply(double a, double b);
     
-    [Operation("divide")]
+    [Operation("/")]
     double Divide(double a, double b);
 }
