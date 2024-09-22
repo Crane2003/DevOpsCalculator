@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Calculator";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Calculate" method="post">
+    <div class="d-flex">
+        <input type="text" name="expression" placeholder="Expression" />
+
+        <button class="mx-1" type="submit">=</button>
+        @if (ViewBag.Result != null)
+        {
+            <h4>@ViewBag.Result</h4>
+        }
+    </div>
+</form>
