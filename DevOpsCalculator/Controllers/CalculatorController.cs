@@ -1,6 +1,7 @@
 ﻿using DevOpsCalculator.Calculator;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace DevOpsCalculator.Controllers;
 public class CalculatorController(ICalculator calculator) : Controller
@@ -18,35 +19,73 @@ public class CalculatorController(ICalculator calculator) : Controller
     /// <summary>
     /// Opens the "/calculator" page by POST request
     /// </summary>
-    /// <param name="number1">The first value</param>
-    /// <param name="number2">The second value</param>
-    /// <param name="operation">The type of operation. The following types can be used:
-    ///     <list type="table">
-    ///         <item>add</item>
-    ///         <item>subtract</item>
-    ///         <item>multiply</item>
-    ///         <item>divide</item>
-    ///     </list>
-    /// </param>
+    /// <param name="expression">The expression to calculate</param>
     /// <returns>The "Index" view of the page</returns>
-    /// <exception cref="ArgumentException">Thrown when the passed data type doesn't exist</exception>
+    /// <exception cref="ArgumentNullException">Thrown when passed the empty <paramref name="expression"/> string</exception>
+    /// <exception cref="ArgumentException">Thrown when the passed operation type doesn't exist</exception>
     [HttpPost]
     [Route("/calculator")]
-    public IActionResult Calculate(double number1, double number2, string operation)
+    public IActionResult Calculate(string expression)
     {
         try
         {
-            var methods = typeof(ICalculator).GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            var method = methods.FirstOrDefault(m
-                => m.GetCustomAttribute<OperationAttribute>()?.Operation == operation)
-                ?? throw new ArgumentException($"Unknown operation: {operation}");
+            if (string.IsNullOrEmpty(expression))
+                throw new ArgumentNullException(expression, "The string must not be empty");
 
-            ViewBag.Result = method.Invoke(calculator, [number1, number2]);
+            string allowed = @"[^0-9+\-*/]";
+            Match match = Regex.Match(expression, allowed);
+            if (match.Success)
+                throw new ArgumentException($"Unknown operation: {match.Value}");
+
+            expression = ProcessOperations(expression, @"(?<num1>\d+)(?<op>[\*\/])(?<num2>\d+)");
+            expression = ProcessOperations(expression, @"(?<num1>\d+)(?<op>[\+\-])(?<num2>\d+)");
+
+            ViewBag.Result = expression;
         } catch (Exception ex)
         {
             ViewBag.Exception = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
         }
 
-        return View("Index");
+        return View(nameof(Index));
+    }
+
+    /// <summary>
+    /// Processes operations that match a given pattern
+    /// </summary>
+    /// <param name="input">The expression string</param>
+    /// <param name="pattern">The pattern to be followed</param>
+    /// <returns>New string with the corresponding operations performed</returns>
+    private string ProcessOperations(string input, string pattern)
+    {
+        while (Regex.IsMatch(input, pattern))
+        {
+            input = Regex.Replace(input, pattern, match =>
+            {
+                double num1 = double.Parse(match.Groups["num1"].Value);
+                double num2 = double.Parse(match.Groups["num2"].Value);
+                string op = match.Groups["op"].Value;
+
+                double result = PerformOperation(num1, num2, op);
+                return result.ToString();
+            });
+        }
+
+        return input;
+    }
+
+    /// <summary>
+    /// Performs an operation on the passed values
+    /// </summary>
+    /// <param name="num1">The first number</param>
+    /// <param name="num2">The second number</param>
+    /// <param name="op">The operation type</param>
+    /// <returns>The result of the performed operation</returns>
+    private double PerformOperation(double num1, double num2, string op)
+    {
+        var methods = typeof(ICalculator).GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        var method = methods.FirstOrDefault(m
+            => m.GetCustomAttribute<OperationAttribute>()?.Operation == op);
+
+        return Convert.ToDouble(method?.Invoke(calculator, [num1, num2]));
     }
 }

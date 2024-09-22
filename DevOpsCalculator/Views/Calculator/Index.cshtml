@@ -5,32 +5,13 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-action="Calculate" method="post">
-    <div>
-        <label for="number1">Number 1:</label>
-        <input type="text" name="number1" />
-    </div>
+    <div class="d-flex">
+        <input type="text" name="expression" placeholder="Expression" />
 
-    <div>
-        <label for="number2">Number 2:</label>
-        <input type="text" name="number2" />
-    </div>
-
-    <div>
-        <label for="operation">Operation:</label>
-        <select name="operation">
-            <option value="add">Add</option>
-            <option value="subtract">Subtract</option>
-            <option value="multiply">Multiply</option>
-            <option value="divide">Divide</option>
-        </select>
-    </div>
-
-    <div>
-        <button type="submit">=</button>
+        <button class="mx-1" type="submit">=</button>
+        @if (ViewBag.Result != null)
+        {
+            <h4>@ViewBag.Result</h4>
+        }
     </div>
 </form>
-
-@if (ViewBag.Result != null)
-{
-    <h3>Result: @ViewBag.Result</h3>
-}
