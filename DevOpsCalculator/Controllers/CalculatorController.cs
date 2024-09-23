@@ -32,13 +32,13 @@ public class CalculatorController(ICalculator calculator) : Controller
             if (string.IsNullOrEmpty(expression))
                 throw new ArgumentNullException(expression, "The string must not be empty");
 
-            string allowed = @"[^0-9+\-*/]";
+            string allowed = @"[^0-9+\-*/,]";
             Match match = Regex.Match(expression, allowed);
             if (match.Success)
                 throw new ArgumentException($"Unknown operation: {match.Value}");
 
-            expression = ProcessOperations(expression, @"(?<num1>\d+)(?<op>[\*\/])(?<num2>\d+)");
-            expression = ProcessOperations(expression, @"(?<num1>\d+)(?<op>[\+\-])(?<num2>\d+)");
+            expression = ProcessOperations(expression, @"(?<num1>-?\d+(?:,\d+)?)(?<op>[\*\/])(?<num2>\d+(?:,\d+)?)");
+            expression = ProcessOperations(expression, @"(?<num1>-?\d+(?:,\d+)?)(?<op>[\+\-])(?<num2>\d+(?:,\d+)?)");
 
             ViewBag.Result = expression;
         } catch (Exception ex)
