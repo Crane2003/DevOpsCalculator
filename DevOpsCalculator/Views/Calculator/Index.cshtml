@@ -2,16 +2,72 @@
     ViewData["Title"] = "Calculator";
 }
 
-<h1>@ViewData["Title"]</h1>
-
 <form asp-action="Calculate" method="post">
-    <div class="d-flex">
-        <input type="text" name="expression" placeholder="Expression" />
-
-        <button class="mx-1" type="submit">=</button>
-        @if (ViewBag.Result != null)
-        {
-            <h4>@ViewBag.Result</h4>
-        }
+    <div class="row">
     </div>
+    <table>
+        <thead>
+            <tr>
+                <td colspan="4">
+                    <textarea class="form-control text-box" id="expression" name="expression">@(ViewBag.Result is not null ? ViewBag.Result : 0)</textarea>
+                    <span class="alert-danger">@ViewBag.Exception</span>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input class="btn btn-primary calcBtn" id="value" type="button" value="+" /></td>
+                <td><input class="btn btn-primary calcBtn" id="value" type="button" value="-" /></td>
+                <td><input class="btn btn-primary calcBtn" id="value" type="button" value="*" /></td>
+                <td><input class="btn btn-primary calcBtn" id="value" type="button" value="/" /></td>
+            </tr>
+            <tr>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="1" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="2" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="3" /></td>
+                <td rowspan="4"><button class="btn btn-primary calcRes" type="submit">=</button></td>
+            </tr>
+            <tr>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="4" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="5" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="6" /></td>
+            </tr>
+            <tr>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="7" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="8" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="9" /></td>
+            </tr>
+            <tr>
+                <td><button class="btn btn-primary calcBtn" id="clear" type="button">C</button></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="0" /></td>
+                <td><input class="btn btn-outline-primary calcBtn" id="value" type="button" value="," /></td>
+            </tr>
+        </tbody>
+    </table>
 </form>
+
+<script>
+    const buttons = document.querySelectorAll("#value");
+    const expression = document.getElementById("expression");
+    const clear = document.getElementById("clear");
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            if (expression.value === '0') {
+                expression.value = this.value;
+            } else {
+                expression.value += this.value;
+            }
+        });
+    });
+
+    clear.addEventListener('click', function () {
+        expression.value = '0';
+    });
+
+    expression.addEventListener('input', function () {
+        if (this.value.startsWith('0')) {
+            expression.value = this.value.slice(1);;
+        }
+    });
+</script>

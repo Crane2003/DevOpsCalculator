@@ -20,3 +20,32 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+table {
+    margin: auto;
+    height: 100%;
+}
+
+td[rowspan] {
+    vertical-align: top;
+}
+
+.calcBtn {
+    font-size: 20px;
+    width: 100px;
+    height: 75px;
+}
+
+.calcRes {
+    display: block;
+    width: 100px;
+    height: 100%;
+}
+
+.text-box {
+    flex-wrap: wrap-reverse;
+    font-size: 40px;
+    width: 100%;
+    text-align: right;
+    margin-bottom: 5px;
+}
