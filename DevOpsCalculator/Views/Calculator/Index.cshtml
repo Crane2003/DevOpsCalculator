@@ -53,7 +53,7 @@
 
     buttons.forEach(button => {
         button.addEventListener('click', function () {
-            if (expression.value === '0') {
+            if (expression.value === '0' && !isNaN(this.value)) {
                 expression.value = this.value;
             } else {
                 expression.value += this.value;
@@ -66,7 +66,7 @@
     });
 
     expression.addEventListener('input', function () {
-        if (this.value.startsWith('0')) {
+        if (expression.value.startsWith('0')) {
             expression.value = this.value.slice(1);;
         }
     });

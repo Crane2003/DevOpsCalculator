@@ -1,10 +1,11 @@
 ﻿using DevOpsCalculator.Calculator;
+using DevOpsCalculator.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace DevOpsCalculator.Controllers;
-public class CalculatorController(ICalculator calculator) : Controller
+public class CalculatorController(CalculatorService calculator) : Controller
 {
     /// <summary>
     /// Opens the "/calculator" page by GET request
@@ -82,7 +83,7 @@ public class CalculatorController(ICalculator calculator) : Controller
     /// <returns>The result of the performed operation</returns>
     private double PerformOperation(double num1, double num2, string op)
     {
-        var methods = typeof(ICalculator).GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        var methods = typeof(CalculatorService).GetMethods(BindingFlags.Public | BindingFlags.Instance);
         var method = methods.FirstOrDefault(m
             => m.GetCustomAttribute<OperationAttribute>()?.Operation == op);
 
